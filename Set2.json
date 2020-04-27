@@ -1,0 +1,27 @@
+[
+  {
+    "Name" : "Dinner",
+    "Type" : "Meal",
+    "StartDate" : 20200414,
+    "StartTime" : 17,
+    "Duration" : 1,
+    "EndDate" : 20200507,
+    "Frequency" : 1
+  },
+  {
+    "Name" : "Homework",
+    "Type" : "Study",
+    "StartDate" : 20200414,
+    "StartTime" : 15,
+    "Duration" : 1,
+    "EndDate" : 20200507,
+    "Frequency" : 1
+  },
+  {
+    "Name" : "Going to Mall",
+    "Type" : "Shopping",
+    "Date" : 20200501,
+    "StartTime" : 10,
+    "Duration" : 1.5
+  }
+]
