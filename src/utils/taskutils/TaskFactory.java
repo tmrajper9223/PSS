@@ -41,9 +41,9 @@ public class TaskFactory {
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Determines What Task to create based on type parameter
+     * @param type task Type inputted by the user
+     * @return Task associated with type, if type does not exist, return null throw exception
      */
     public Task createTask(String type) {
         try {
@@ -57,12 +57,12 @@ public class TaskFactory {
                 throw new InvalidTaskFormatException("Not a Valid Task Type");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**
-     * Creates Anti Task
+     * Creates Anti Task From JSONObject
      * @param jsonObject JSON Object From JSON Array
      * @return Anti Task if all fields valid, null if not
      */
@@ -90,9 +90,9 @@ public class TaskFactory {
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Creates Anti Task, Prompts User for task information
+     * @param type Task Type to be included within Task Instance
+     * @return AntiTask if formatting of all fields and input are valid, if not returns null
      */
     private AntiTask createAntiTask(String type) {
         System.out.println("Enter Task Information (Name,Date,StartTime,Duration):");
@@ -112,7 +112,7 @@ public class TaskFactory {
     }
 
     /**
-     * Creates Transient Task
+     * Creates Transient Task From JSONObject
      * @param jsonObject JSON Object From JSON Array
      * @return Transient Task if all fields valid, null if not
      */
@@ -140,9 +140,9 @@ public class TaskFactory {
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Creates Transient Task, Prompts User for task information
+     * @param type Task Type to be included within Task Instance
+     * @return TransientTask if formatting of all fields and input are valid, if not returns null
      */
     private TransientTask createTransientTask(String type) {
         System.out.println("Enter Task Information (Name,Date,StartTime,Duration):");
@@ -162,7 +162,7 @@ public class TaskFactory {
     }
 
     /**
-     * Creates the Recurring Task
+     * Creates the Recurring Task From JSONObject
      * @param jsonObject JSON Object From JSON Array
      * @return Recurring Task if all fields are valid, null if not
      */
@@ -203,9 +203,9 @@ public class TaskFactory {
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Creates Recurring Task, Prompts User for task information
+     * @param type Task Type to be included within Task Instance
+     * @return RecurringTask if formatting of all fields and input are valid, if not returns null
      */
     private RecurringTask createRecurringTask(String type) {
         System.out.println("Enter Task Information (Name,Date,StartTime,Duration,EndDate,Frequency):");

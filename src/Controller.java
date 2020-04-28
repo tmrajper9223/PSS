@@ -10,7 +10,7 @@ import utils.taskutils.Task;
 import utils.taskutils.TaskFactory;
 
 /**
- *
+ * Singleton Design of the Controller Class handles interaction between UI and TaskFactory/Schedule
  */
 public class Controller {
 
@@ -22,17 +22,17 @@ public class Controller {
     }
 
     /**
-     *
-     * @return
+     * Singleton Design of the Controller Class
+     * @return The Instance of the Controller Class
      */
     public static Controller getInstance() {
         return (controllerInstance == null) ? new Controller() : controllerInstance;
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Passes the User Inputted type to the TaskFactory and checks if name already exists in Task List
+     * @param type User Inputted Task Type
+     * @return New Task if Task Name does not already Exist, null if it does
      */
     public Task createTask(String type) {
         Task newTask = new TaskFactory().createTask(type);
@@ -61,8 +61,43 @@ public class Controller {
     }
 
     /**
-     *
-     * @param filepath
+     * Finds Task in Task List and Removes it from list, if not found throw InvalidTaskException with appropriate exception msg
+     * @param name Name of Task to be deleted
+     */
+    public void deleteTask(String name) {
+
+    }
+
+    /**
+     * Finds Task By Name in taskList and returns it, if not found throw InvalidTaskException here with appropriate msg
+     * @param name Name of Task to be Edited
+     * @return Task if found, null if not
+     */
+    public Task getTask(String name) {
+        return null;
+    }
+
+    /**
+     * Finds the Task By name and replaces that task with the edited task
+     * @param name name of the Task to Edit
+     * @param editedTask New Edited Task to replace the old task
+     */
+    public void replace(String name, Task editedTask) {
+
+    }
+
+    /**
+     * Takes Task List and Passes it to Schedule Class to generate Schedule
+     * Once Schedule is generated, it is returned here and written out in JSON format to a file
+     * @param filepath Path to JSON File to write schedule to
+     */
+    public void writeScheduleToFile(String filepath) {
+
+    }
+
+    /**
+     * Reads the file from the filepath and uses JSON Library To Parse JSON Array and Pass Each Object To TaskFactory
+     * @param filepath Path to JSON File
      */
     public void readScheduleFromFile(String filepath) {
         TaskFactory taskFactory = new TaskFactory();
@@ -85,6 +120,24 @@ public class Controller {
     }
 
     /**
+     * Displays Schedule for a particular timePeriod(Day/Week/Month) on a specific startDate
+     * @param timePeriod Day/Week/Month(1/7/30 Respectively) Inputted by User in the UI
+     * @param startDate Date To start Viewing from based on time period, Inputted by User in the UI
+     */
+    public void viewSchedule(int timePeriod, double startDate) {
+
+    }
+
+    /**
+     * Unclear will ask professor -> Tarik
+     * @param timePeriod Day/Week/Month to Write Schedule for
+     * @param startDate Start Date for specific time period
+     */
+    public void writeSchedule(int timePeriod, double startDate) {
+
+    }
+
+    /**
      * Iterates through task list and checks is name matches any task name already in the list
      * @param name task name passed in by user/program
      * @return true if task is already in the task list
@@ -96,6 +149,9 @@ public class Controller {
         return false;
     }
 
+    /**
+     * Called When Task Cannot Be Found in Task List
+     */
     private static class InvalidTaskException extends Exception {
         public InvalidTaskException(String errorMessage) {
             super(errorMessage);

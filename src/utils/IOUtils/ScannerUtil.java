@@ -2,6 +2,9 @@ package utils.IOUtils;
 
 import java.util.*;
 
+/**
+ * Singleton Instance of the Scanner class
+ */
 public class ScannerUtil {
 
     private static Scanner scan = null;

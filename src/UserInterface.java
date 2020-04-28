@@ -20,7 +20,7 @@ public class UserInterface {
     }
 
     /**
-     *
+     * Displays Choices for user and prompts user for input choice
      */
     public void startPSS() {
         while (true) {
@@ -36,17 +36,22 @@ public class UserInterface {
                     viewTask();
                     break;
                 case 3:
+                    deleteTask();
                     break;
                 case 4:
+                    editTask();
                     break;
                 case 5:
+                    writeScheduleToFile();
                     break;
                 case 6:
                     readScheduleFromFile();
                     break;
                 case 7:
+                    viewSchedule();
                     break;
                 case 8:
+                    writeSchedule();
                     break;
                 case 9:
                     scan.close();
@@ -61,7 +66,7 @@ public class UserInterface {
     }
 
     /**
-     * User Enters Task Type and TaskFactory Prompts User for appropriate fields, if null it is ignored
+     * User Enters Task Type and sends type to controller, controller handles exceptions
      */
     private void createTask() {
         try {
@@ -73,7 +78,7 @@ public class UserInterface {
     }
 
     /**
-     *
+     * User Enters Task Name and passes to controller, if it exists it displays Task, if not NullPointerException is Caught/Ignored and Appropriate Msg is displayed
      */
     private void viewTask() {
         System.out.println("Enter Task Name: ");
@@ -87,28 +92,33 @@ public class UserInterface {
     }
 
     /**
-     *
+     * Prompts User for Task Name and sends to controller, controller will handle exceptions
      */
     private void deleteTask() {
 
     }
 
     /**
-     *
+     * Prompts User for Task Name and sends name to controller -> controller.getTask(String name)
+     * If Task Not Found controller Throws Exception and returns null
+     * NullPointerException ignored here
+     * If Task Found Prompt User for fields to edit, when finished with edits call -> controller.replace(String name, Task editedTask)
+     * String name -> Name of the task prompted for in the beginning of the function
+     * If edits are not valid for formatting, exception will be thrown in controller and return null, function will terminate and no changes saved
      */
     private void editTask() {
 
     }
 
     /**
-     *
+     * This Writes the Current Schedule To the File
      */
     private void writeScheduleToFile() {
 
     }
 
     /**
-     *
+     * Prompts User For Filepath, verifies file is a JSON File, passes file to controller for parsing
      */
     private void readScheduleFromFile() {
         System.out.println("Dialog May Be Under Your Windows, Alt + Tab to Navigate Windows.");
@@ -129,9 +139,9 @@ public class UserInterface {
     }
 
     /**
-     *
-     * @param filepath
-     * @return
+     * Verifies the File Type is a JSON
+     * @param filepath Path To File
+     * @return true if file is JSON File
      */
     private boolean verifyFileType(String filepath) {
         String[] path = filepath.split(Pattern.quote("\\"));
@@ -140,23 +150,26 @@ public class UserInterface {
     }
 
     /**
-     *
-     * @param viewPeriod
+     * Displays Schedule From the Start Date for that Time Period
+     * Prompts User For Time Period, Day/Week/Month -> (1, 7, 30) Respectively
+     * Prompts User For the Start Date For that Time Period
      */
-    private void viewSchedule(int viewPeriod) {
+    private void viewSchedule() {
 
     }
 
     /**
-     *
-     * @param writePeriod
+     * Unclear, Will Ask Professor About This -> Tarik
+     * Writes Schedule From the Start Date for that Time Period
+     * Prompts User For Time Period, Day/Week/Month -> (1, 7, 30) Respectively
+     * Prompts User For the Start Date For that Time Period
      */
-    private void writeSchedule(int writePeriod) {
+    private void writeSchedule() {
 
     }
 
     /**
-     *
+     * Displays Options For User
      */
     private void display() {
         System.out.println("1: Create a Task");
@@ -171,6 +184,9 @@ public class UserInterface {
         System.out.print("Select an Option: ");
     }
 
+    /**
+     * Custom Exception if User Does Not Select JSON File
+     */
     private static class InvalidFileTypeException extends Exception {
         public InvalidFileTypeException(String errorMessage) {
             super(errorMessage);
