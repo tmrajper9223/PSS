@@ -73,12 +73,12 @@ public class Task implements TaskInterface {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "\n{" +
-                "\n\tname = '" + name + '\'' +
-                ", \n\ttype = '" + type + '\'' +
-                ", \n\tdate = " + (int)date +
-                ", \n\tstartTime = " + startTime +
-                ", \n\tduration = " + duration +
+        return "{" +
+                "\n\t\"Name\" : \"" + name + '\"' +
+                ", \n\t\"Type\" : \"" + type + '\"' +
+                ", \n\t\"Date\" : \"" + (int)date +
+                ", \n\t\"StartTime\" : " + startTime +
+                ", \n\t\"Duration\" : " + duration +
                 "\n}";
     }
 }
