@@ -36,14 +36,14 @@ public class RecurringTask extends Task implements RecurringTaskInterface {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "\n{" +
-                "\n\tname = '" + getName() + '\'' +
-                ", \n\ttype = '" + getType() + '\'' +
-                ", \n\tdate = " + (int)getDate() +
-                ", \n\tstartTime = " + getStartTime() +
-                ", \n\tduration = " + getDuration() +
-                ", \n\tendDate = " + (int)endDate +
-                ", \n\tfrequency = " + (int)frequency +
+        return "{" +
+                "\n\t\"Name\" : \"" + getName() + '\"' +
+                ", \n\t\"Type\" : \"" + getType() + '\"' +
+                ", \n\t\"Date\" : " + (int)getDate() +
+                ", \n\t\"StartTime\" : " + getStartTime() +
+                ", \n\t\"Duration\" : " + getDuration() +
+                ", \n\t\"EndDate\" : " + (int)endDate +
+                ", \n\t\"Frequency\" : " + (int)frequency +
                 "\n}";
     }
 
