@@ -112,7 +112,17 @@ public class UserInterface {
         String name = scan.nextLine();
         try{
             Task task = controller.viewTask(name);
-            Task editedTask = task;
+            Task editedTask = new Task();
+            editedTask.setName(task.getName());
+            editedTask.setType(task.getType());
+            editedTask.setDate(task.getDate());
+            editedTask.setDuration(task.getDate());
+
+            if(task instanceof RecurringTask){
+                editedTask = new RecurringTask();
+                ((RecurringTask) editedTask).setFrequency(((RecurringTask) task).getFrequency());
+                ((RecurringTask) editedTask).setEndDate(((RecurringTask) task).getEndDate());
+            }
 
             System.out.println(task.toString());
             String edit = "";
@@ -131,22 +141,26 @@ public class UserInterface {
                         case "Date":
                             System.out.println("Please Enter a new Date: ");
                             double editDate = scan.nextDouble();
+                            scan.nextLine();
                             editedTask.setDate(editDate);
                             break;
                         case "StartTime":
                             System.out.println("Please Enter a new StartTime: ");
                             double editStartTime = scan.nextDouble();
+                            scan.nextLine();
                             editedTask.setStartDate(editStartTime);
                             break;
                         case "Duration":
                             System.out.println("Please Enter a new Duration: ");
                             double editDuration = scan.nextDouble();
+                            scan.nextLine();
                             editedTask.setDuration(editDuration);
                             break;
                         case "EndDate":
                             if(task instanceof RecurringTask){
                                 System.out.println("Please Enter a new EndDate: ");
                                 double editEndDate = scan.nextDouble();
+                                scan.nextLine();
                                 ((RecurringTask)task).setEndDate(editEndDate);
                             }else{
                                 System.out.println("The Current Task Type does not need an EndDate");
@@ -156,6 +170,7 @@ public class UserInterface {
                             if(task instanceof  RecurringTask){
                                 System.out.println("Please Enter a new Frequency: ");
                                 double editFrequency = scan.nextDouble();
+                                scan.nextLine();
                                 ((RecurringTask) task).setFrequency(editFrequency);
                             }else{
                                 System.out.println("The Current Task Type does not need a Frequency");
@@ -165,7 +180,6 @@ public class UserInterface {
                 }
             }
             controller.replace(name, editedTask);
-
 
         }catch (NullPointerException ignored){
             System.out.println("A Task With that Name Does Not Exist!\n");
