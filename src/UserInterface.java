@@ -1,4 +1,5 @@
 import utils.IOUtils.ScannerUtil;
+import utils.taskutils.RecurringTask;
 import utils.taskutils.Task;
 
 import javax.swing.*;
@@ -107,7 +108,68 @@ public class UserInterface {
      * If edits are not valid for formatting, exception will be thrown in controller and return null, function will terminate and no changes saved
      */
     private void editTask() {
+        System.out.println("Enter Task Name to Edit: ");
+        String name = scan.nextLine();
+        try{
+            Task task = controller.viewTask(name);
+            Task editedTask = task;
 
+            System.out.println(task.toString());
+            String edit = "";
+            while(!edit.equals("q")) {
+                System.out.println("What Would you like to Edit?\nType q to quit.");
+                edit = scan.nextLine();
+                if(edit.equals("q")){
+                    break;
+                }else{
+                    switch(edit){
+                        case "Name":
+                            System.out.println("Please Enter a new Name: ");
+                            String editName = scan.nextLine();
+                            editedTask.setName(editName);
+                            break;
+                        case "Date":
+                            System.out.println("Please Enter a new Date: ");
+                            double editDate = scan.nextDouble();
+                            editedTask.setDate(editDate);
+                            break;
+                        case "StartTime":
+                            System.out.println("Please Enter a new StartTime: ");
+                            double editStartTime = scan.nextDouble();
+                            editedTask.setStartDate(editStartTime);
+                            break;
+                        case "Duration":
+                            System.out.println("Please Enter a new Duration: ");
+                            double editDuration = scan.nextDouble();
+                            editedTask.setDuration(editDuration);
+                            break;
+                        case "EndDate":
+                            if(task instanceof RecurringTask){
+                                System.out.println("Please Enter a new EndDate: ");
+                                double editEndDate = scan.nextDouble();
+                                ((RecurringTask)task).setEndDate(editEndDate);
+                            }else{
+                                System.out.println("The Current Task Type does not need an EndDate");
+                            }
+                            break;
+                        case "Frequency":
+                            if(task instanceof  RecurringTask){
+                                System.out.println("Please Enter a new Frequency: ");
+                                double editFrequency = scan.nextDouble();
+                                ((RecurringTask) task).setFrequency(editFrequency);
+                            }else{
+                                System.out.println("The Current Task Type does not need a Frequency");
+                            }
+                            break;
+                    }
+                }
+            }
+            controller.replace(name, editedTask);
+
+
+        }catch (NullPointerException ignored){
+            System.out.println("A Task With that Name Does Not Exist!\n");
+        }
     }
 
     /**
