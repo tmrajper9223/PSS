@@ -72,9 +72,8 @@ public class Controller {
      * @param name Name of Task to be Edited
      * @return Task if found, null if not
      */
-    public Task getTask(String name) {
-        return null;
-    }
+//    public Task getTask(String name) {return null;}
+//    Edited out because redundant
 
     /**
      * Finds the Task By name and replaces that task with the edited task
@@ -82,6 +81,19 @@ public class Controller {
      * @param editedTask New Edited Task to replace the old task
      */
     public void replace(String name, Task editedTask) {
+//        for(Task task : taskList){
+//            if(task.getName().equals(name)){
+//                if(!doesTaskExist(editedTask.getName())){
+//                    task.setName(editedTask.getName());
+//                }else{System.out.println("Cannot Change Task Name, Task Already exists");}
+//
+//
+//            }else{
+//            System.out.println("A Task With that Name Does Not Exist!\n");
+//        }
+//    }
+
+
 
     }
 
@@ -152,6 +164,7 @@ public class Controller {
         };
         printList.sort(sortByTime);
         printList.sort(sortByDate);
+
         for (int i=0; i<printList.size(); i++)
             System.out.println(printList.get(i).toString());
     }
