@@ -161,7 +161,7 @@ public class UserInterface {
                                 System.out.println("Please Enter a new EndDate: ");
                                 double editEndDate = scan.nextDouble();
                                 scan.nextLine();
-                                ((RecurringTask)task).setEndDate(editEndDate);
+                                ((RecurringTask)editedTask).setEndDate(editEndDate);
                             }else{
                                 System.out.println("The Current Task Type does not need an EndDate");
                             }
@@ -171,7 +171,7 @@ public class UserInterface {
                                 System.out.println("Please Enter a new Frequency: ");
                                 double editFrequency = scan.nextDouble();
                                 scan.nextLine();
-                                ((RecurringTask) task).setFrequency(editFrequency);
+                                ((RecurringTask) editedTask).setFrequency(editFrequency);
                             }else{
                                 System.out.println("The Current Task Type does not need a Frequency");
                             }
