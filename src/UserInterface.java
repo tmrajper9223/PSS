@@ -155,7 +155,46 @@ public class UserInterface {
      * Prompts User For the Start Date For that Time Period
      */
     private void viewSchedule() {
+        System.out.println("View schedule for how many days? (1, 7, 30)");
+        int timePeriod = scan.nextInt();
+        while (!(timePeriod == 1 || timePeriod == 7 || timePeriod == 30) ) {
+            System.out.print("Invalid time period. Please reenter time period: ");
+            timePeriod = scan.nextInt();
+        }
+        System.out.print("Enter Start Date (yyyyMMdd): ");
+        double startDate = scan.nextDouble();
+        while (!checkDate(startDate)) {
+            System.out.print("Invalid date. Enter Start Date (yyyyMMdd): ");
+            startDate = scan.nextInt();
+        }
+        controller.viewSchedule(timePeriod, startDate);
+    }
 
+    private boolean checkDate(double date) {
+        int month = (int)date % 10000;
+        month /= 100;
+        int day = (int)date % 100;
+        switch (month) {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                if (day <= 31) return true; break;
+            case 4: case 6: case 9: case 11:
+                if (day <= 30) return true; break;
+            case 2:
+                if (day <= 28 || (checkLeapYear(date) && day <= 29)) return true; break;
+            default: return false;
+        }
+        return false;
+    }
+    private boolean checkLeapYear(double date) {
+        int year = (int)date/10000;
+        if (year%4==0) {
+            if (year%400==0)
+                return true;
+            else if (year%100==0)
+                return false;
+            return true;
+        }
+        return false;
     }
 
     /**
