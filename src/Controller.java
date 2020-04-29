@@ -1,7 +1,6 @@
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
@@ -125,7 +124,36 @@ public class Controller {
      * @param startDate Date To start Viewing from based on time period, Inputted by User in the UI
      */
     public void viewSchedule(int timePeriod, double startDate) {
+        int counter = 0;
+        int n = taskList.size();
+        List<Task> printList = new ArrayList<>();
+        while (counter < n && taskList.get(counter).getDate() <= startDate) {
+            counter++;
+        }
+        Task currentTask = taskList.get(counter);
+        while (currentTask.getDate() - startDate <= timePeriod) {
+            printList.add(currentTask);
+            if (counter < n-1)
+                currentTask = taskList.get(++counter);
+        }
 
+        // sort by date & starting time
+        Comparator<Task> sortByDate = new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return (int)(o1.getDate() - o2.getDate());
+            }
+        };
+        Comparator<Task> sortByTime = new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return (int)(o1.getStartTime() - o2.getStartTime());
+            }
+        };
+        printList.sort(sortByTime);
+        printList.sort(sortByDate);
+        for (int i=0; i<printList.size(); i++)
+            System.out.println(printList.get(i).toString());
     }
 
     /**
