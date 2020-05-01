@@ -215,8 +215,10 @@ public class Controller {
 
             for (Task task : taskList) {
 
-                // Skip if the Task has the same name.
-                if (task.getName().equals(inputTask.getName())) {
+                // Do not check any Anti-Tasks because they should not have an overlap.
+                // Skip all Anti-Tasks
+                // OR skip if the Task has the same name
+                if (task instanceof AntiTask || task.getName().equals(inputTask.getName())) {
                     continue;
                 }
 
@@ -226,70 +228,85 @@ public class Controller {
                     return true;
                 }
 
-                // Checking if the Task in the list is Transient or AntiTask:
-                if ((task instanceof TransientTask || task instanceof AntiTask) && task.getDate() == inputTask.getDate()) {
+                // Checking if the Task in the list is Transient:
+                if ( task instanceof TransientTask && task.getDate() == inputTask.getDate() ) {
                     double currentTaskEndTime = task.getStartTime() + task.getDuration(),
                             inputTaskEndTime = task.getStartTime() + task.getDuration();
 
                     // Checking WITH midnight exception.
+
+                    // If current Task has midnight exception
                     if (task.getStartTime() + task.getDuration() > 23.75 && inputTask.getStartTime() + inputTask.getDuration() < 23.75) {
                         currentTaskEndTime -= 24;
 
                         if (currentTaskEndTime == inputTaskEndTime) {
                             return true;
-                        } else if ( task.getStartTime() < inputTask.getStartTime() && inputTask.getStartTime() < 0 ) {
+                            // Between current Task's start time and midnight
+                        } else if ( task.getStartTime() < inputTask.getStartTime() && inputTask.getStartTime() <= 0 ) {
                             // Checks if inputTask start time is between current Task's start time and midnight.
                             return true;
-                        } else if ( task.getStartTime() < inputTaskEndTime && inputTaskEndTime < 0 ) {
+                        } else if ( task.getStartTime() < inputTaskEndTime && inputTaskEndTime <= 0 ) {
                             // Checks if inputTask end time is between current Task's start time and midnight.
                             return true;
-                        } else if ( inputTask.getStartTime() < task.getStartTime() && task.getStartTime() < inputTaskEndTime ) {
-                            // Checks if Transient or Anti-Task has inputTask's start time within it.
+                        }
+
+                        // Between midnight and currentTaskEndTime
+                        else if ( 0 <= inputTask.getStartTime() && inputTask.getStartTime() < currentTaskEndTime ) {
+                            // Checks if inputTask's start time is between midnight and current task's end time.
                             return true;
                         }
-                        else if ( true ) { // Ended here.
-                            return true;
-                        }
+
+                        // If input Task has midnight exception
                     } else if (inputTask.getStartTime() + inputTask.getDuration() > 23.75 && task.getStartTime() + task.getDuration() < 23.75) {
                         inputTaskEndTime -= 24;
 
                         if (currentTaskEndTime == inputTaskEndTime) {
                             return true;
+                        } else if ( inputTask.getStartTime() < task.getStartTime() && task.getStartTime() <= 0 ) {
+                            // Checks if current task start time is between inputTask's start time and midnight.
+                            return true;
+                        } else if ( inputTask.getStartTime() < currentTaskEndTime && currentTaskEndTime <= 0 ) {
+                            // Checks if current Task's end time is between inputTask's start time and midnight.
+                            return true;
+                        } // Between midnight and inputTaskEndTime
+                        else if ( 0 <= task.getStartTime() && task.getStartTime() < inputTaskEndTime ) {
+                            // Checks if current task's start time is between midnight and inputTask's end time.
+                            return true;
                         }
+
+                        // If both current Task and input Task have midnight exceptions
                     } else if (inputTask.getStartTime() + inputTask.getDuration() > 23.75 && task.getStartTime() + task.getDuration() > 23.75) {
-                        currentTaskEndTime -= 24;
-                        inputTaskEndTime -= 24;
+                        // If both go past midnight, they will overlap.
+                        return true;
+                    } else { // Checks WITHOUT midnight exception.
 
                         if (currentTaskEndTime == inputTaskEndTime) {
                             return true;
-                        }
-                    } else { // Checks WITHOUT midnight exception.
-                        if (currentTaskEndTime == inputTaskEndTime) {
-                            return true;
                         } else if (task.getStartTime() < inputTask.getStartTime() && inputTask.getStartTime() < currentTaskEndTime) {
-                            // If inputTask's start time is within a Transient or Anti-Task.
+                            // If inputTask's start time is within a Transient.
                             return true;
                         } else if (task.getStartTime() < inputTaskEndTime && inputTaskEndTime < currentTaskEndTime) {
-                            // If inputTask's end time is within a Transient or Anti-Task.
+                            // If inputTask's end time is within a Transient.
                             return true;
                         } else if (inputTask.getStartTime() < task.getStartTime() && currentTaskEndTime < inputTaskEndTime) {
-                            // If a Transient or Anti-Task is within the inputTask.
+                            // If a Transient is within the inputTask.
                             return true;
                         } else if (task.getStartTime() < inputTask.getStartTime() && inputTaskEndTime < currentTaskEndTime) {
-                            // If inputTask is within a Transient or Anti-Task.
+                            // If inputTask is within a Transient.
                             return true;
                         }
+
                     }
                 } else { // Checks if the input Transient Tasks overlaps with all Recurring Tasks
 
                 }
             }
-        } else if (inputTask instanceof RecurringTask) { // Checks if inputTask is a Recurring Task
-
-        } else { // If inputTask an is AntiTask.
+        } else { // Checks if inputTask is a Recurring Task
 
         }
 
         return false;
     }
+
+    //MAKE METHODS FOR DATE AND TIME CHECKS
 }
