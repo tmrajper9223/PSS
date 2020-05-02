@@ -220,6 +220,14 @@ public class Controller {
         String inputTaskEndDate = "";
         String inputTaskEndYear = "", inputTaskEndMonth = "", inputTaskEndDay = "";
 
+        // Below are inputTask parsed to ints.
+        int inputTaskYearInt = 0,
+                inputTaskMonthInt = 0,
+                inputTaskDayInt = 0,
+                inputTaskEndYearInt = 0,
+                inputTaskEndMonthInt = 0,
+                inputTaskEndDayInt = 0;
+
         if ( inputTask instanceof RecurringTask) {
 
             Double doubleInputTaskEndDate = inputTask.getEndDate(); // ERROR: Cannot call getEndDate()
@@ -257,6 +265,13 @@ public class Controller {
                 inputTaskEndDay += currentLetter;
             }
 
+            //Parse all Strings to int.
+            inputTaskYearInt = Integer.parseInt(inputTaskYear);
+            inputTaskMonthInt = Integer.parseInt(inputTaskMonth);
+            inputTaskDayInt = Integer.parseInt(inputTaskDay);
+            inputTaskEndYearInt = Integer.parseInt(inputTaskEndYear);
+            inputTaskEndMonthInt = Integer.parseInt(inputTaskEndMonth);
+            inputTaskEndDayInt = Integer.parseInt(inputTaskEndDay);
         }
 
         // Identify the type of task:
@@ -270,6 +285,13 @@ public class Controller {
                 String currentTaskYear = "", currentTaskMonth = "", currentTaskDay = "";
                 String currentTaskEndDate = "";
                 String currentTaskEndYear = "", currentTaskEndMonth = "", currentTaskEndDay = "";
+                // Below are current Recurring Task parsed to ints.
+                int currentTaskYearInt = 0,
+                        currentTaskMonthInt = 0,
+                        currentTaskDayInt = 0,
+                        currentTaskEndYearInt = 0,
+                        currentTaskEndMonthInt = 0,
+                        currentTaskEndDayInt = 0;
 
                 // Do not check any Anti-Tasks because they should not have an overlap.
                 // Skip all Anti-Tasks
@@ -320,6 +342,14 @@ public class Controller {
                         char currentLetter = currentTaskDate.charAt(i + 6);
                         currentTaskEndDay += currentLetter;
                     }
+
+                    //Parse all Strings to int.
+                    currentTaskYearInt = Integer.parseInt(currentTaskYear);
+                    currentTaskMonthInt = Integer.parseInt(currentTaskMonth);
+                    currentTaskDayInt = Integer.parseInt(currentTaskDay);
+                    currentTaskEndYearInt = Integer.parseInt(currentTaskEndYear);
+                    currentTaskEndMonthInt = Integer.parseInt(currentTaskEndMonth);
+                    currentTaskEndDayInt = Integer.parseInt(currentTaskEndDay);
                 }
 
                 // Checking if the Task in the list is Transient:
@@ -393,14 +423,17 @@ public class Controller {
                     }
                 } else { // Checks if the input Transient Task overlaps with all Recurring Tasks
 
-                    // Check the year for all years the recurring task is present. If it matches with Transient Task's year, look into it,
-                    while (Integer.parseInt(currentTaskYear) <= Integer.parseInt(currentTaskEndYear) ) {
+                    // NOTE: Need to check exception in which an Anti-Task cancels out one instance of a Recurring Task.
 
+                    // Check the year for all years the recurring task is present. If it matches with Transient Task's year, look into it,
+                    for ( int i = currentTaskYearInt; i <= currentTaskEndYearInt; i++ ) {
+                        // Ended here.
                     }
 
                     // Check if input Transient Task has the same year as current Recurring Task
 
-                    // Below is wrong
+
+                    // Below is wrong, but keeping for reference.
                     if ( inputTaskYear.equals(currentTaskYear) ) { // Error: Could be on different Years
                         // Check if input Transient Task has the same month as current Recurring Task
                         if ( inputTaskMonth.equals(currentTaskMonth) ) { // Error: Could be on different months
@@ -416,6 +449,7 @@ public class Controller {
                             }
                         }
                     }
+                    // Below is correct
 
                 }
             }
