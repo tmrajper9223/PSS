@@ -64,7 +64,18 @@ public class Controller {
      * @param name Name of Task to be deleted
      */
     public void deleteTask(String name) {
-
+        try {
+            for (Task task : taskList) {
+                if(task.getName().equals(name)){
+                    taskList.remove(task);
+                    System.out.println("Task was removed\n");
+                    return;
+                }
+            }
+            throw new InvalidTaskException("Task with that name was never created!\n");
+        }catch(InvalidTaskException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**

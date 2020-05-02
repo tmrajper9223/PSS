@@ -96,7 +96,9 @@ public class UserInterface {
      * Prompts User for Task Name and sends to controller, controller will handle exceptions
      */
     private void deleteTask() {
-
+        System.out.println("Enter Task Name: ");
+        String name = scan.nextLine();
+        controller.deleteTask(name);
     }
 
     /**
