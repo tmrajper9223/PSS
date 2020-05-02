@@ -210,10 +210,66 @@ public class Controller {
      */
     private boolean isTaskOverlapping( Task inputTask ) {
 
+        // Only used if input Task is Recurring.
+        // Breaking up segments of the date into three separate Strings.
+        Double doubleInputTaskDate = inputTask.getDate();
+        String inputTaskDate = doubleInputTaskDate.toString();
+        String inputTaskYear = "", inputTaskMonth = "", inputTaskDay = "";
+
+        // Below Strings are used if inputTask is recurring task.
+        String inputTaskEndDate = "";
+        String inputTaskEndYear = "", inputTaskEndMonth = "", inputTaskEndDay = "";
+
+        if ( inputTask instanceof RecurringTask) {
+
+            Double doubleInputTaskEndDate = inputTask.getEndDate(); // ERROR: Cannot call getEndDate()
+            inputTaskEndDate = doubleInputTaskEndDate.toString();
+
+            // Get inputTask's Year, Month and Day.
+            for ( int i = 0; i < 4; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i);
+                inputTaskYear += currentLetter;
+            }
+
+            for ( int i = 0; i < 2; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i + 4);
+                inputTaskMonth += currentLetter;
+            }
+
+            for ( int i = 0; i < 2; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i + 6);
+                inputTaskDay += currentLetter;
+            }
+
+            // Get inputTask's End Year, End Month and End Day.
+            for ( int i = 0; i < 4; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i);
+                inputTaskEndYear += currentLetter;
+            }
+
+            for ( int i = 0; i < 2; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i + 4);
+                inputTaskEndMonth += currentLetter;
+            }
+
+            for ( int i = 0; i < 2; i++ ) {
+                char currentLetter = inputTaskDate.charAt(i + 6);
+                inputTaskEndDay += currentLetter;
+            }
+
+        }
+
         // Identify the type of task:
         if (inputTask instanceof TransientTask) {
 
             for (Task task : taskList) {
+
+                // Below Strings are used if inputTask is recurring task.
+                Double doubleCurrentTaskDate = task.getDate(); // ERROR: Cannot call getEndDate()
+                String currentTaskDate = doubleInputTaskDate.toString();
+                String currentTaskYear = "", currentTaskMonth = "", currentTaskDay = "";
+                String currentTaskEndDate = "";
+                String currentTaskEndYear = "", currentTaskEndMonth = "", currentTaskEndDay = "";
 
                 // Do not check any Anti-Tasks because they should not have an overlap.
                 // Skip all Anti-Tasks
@@ -226,6 +282,44 @@ public class Controller {
                 if (task.getDate() == inputTask.getDate()
                         && task.getStartTime() == inputTask.getStartTime()) {
                     return true;
+                }
+
+                if ( task instanceof RecurringTask ) {
+
+                    Double doubleCurrentTaskEndDate = task.getEndDate(); // ERROR: Cannot call getEndDate()
+                    currentTaskEndDate = doubleInputTaskEndDate.toString();
+
+                    // Get inputTask's Year, Month and Day.
+                    for ( int i = 0; i < 4; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i);
+                        currentTaskYear += currentLetter;
+                    }
+
+                    for ( int i = 0; i < 2; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i + 4);
+                        currentTaskMonth += currentLetter;
+                    }
+
+                    for ( int i = 0; i < 2; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i + 6);
+                        currentTaskDay += currentLetter;
+                    }
+
+                    // Get inputTask's End Year, End Month and End Day.
+                    for ( int i = 0; i < 4; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i);
+                        currentTaskEndYear += currentLetter;
+                    }
+
+                    for ( int i = 0; i < 2; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i + 4);
+                        currentTaskEndMonth += currentLetter;
+                    }
+
+                    for ( int i = 0; i < 2; i++ ) {
+                        char currentLetter = currentTaskDate.charAt(i + 6);
+                        currentTaskEndDay += currentLetter;
+                    }
                 }
 
                 // Checking if the Task in the list is Transient:
@@ -297,7 +391,31 @@ public class Controller {
                         }
 
                     }
-                } else { // Checks if the input Transient Tasks overlaps with all Recurring Tasks
+                } else { // Checks if the input Transient Task overlaps with all Recurring Tasks
+
+                    // Check the year for all years the recurring task is present. If it matches with Transient Task's year, look into it,
+                    while (Integer.parseInt(currentTaskYear) <= Integer.parseInt(currentTaskEndYear) ) {
+
+                    }
+
+                    // Check if input Transient Task has the same year as current Recurring Task
+
+                    // Below is wrong
+                    if ( inputTaskYear.equals(currentTaskYear) ) { // Error: Could be on different Years
+                        // Check if input Transient Task has the same month as current Recurring Task
+                        if ( inputTaskMonth.equals(currentTaskMonth) ) { // Error: Could be on different months
+                            // Check if current Recurring Task is daily.
+                            if ( task.RecurringTask.getFreuency() == 1 ) { // ERROR: CANNOT GET FREQUENCY OF RECURRING TASK.
+                                // Check as if it is checking a Transient task.
+                            }
+                            else if ( task.RecurringTask.getFrequency() == 7 ) { // Cannot get frequency
+
+                            }
+                            else { // else if ( task.RecurringTask.getFrequency() == 30 )
+
+                            }
+                        }
+                    }
 
                 }
             }
