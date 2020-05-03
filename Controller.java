@@ -1,6 +1,7 @@
 import java.beans.Transient;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 import org.json.simple.*;
@@ -204,261 +205,131 @@ public class Controller {
     }
 
     /**
-     * Algorithm that checks if a task overlaps with another task.
-     * @param inputTask passed in as a Task
-     * @return false if inputTask does NOT overlap with any other task.
+     * Checks if the input of the list of tasks overlap.
+     * @param inputList a list of all Tasks that need to be checked for overlaps.
+     * @return true if there is an overlap in the list of tasks
      */
-    private boolean isTaskOverlapping( Task inputTask ) {
+    private boolean isTaskOverlapping(List<Task> inputList) {
 
-        // Only used if input Task is Recurring.
-        // Breaking up segments of the date into three separate Strings.
-        Double doubleInputTaskDate = inputTask.getDate();
-        String inputTaskDate = doubleInputTaskDate.toString();
-        String inputTaskYear = "", inputTaskMonth = "", inputTaskDay = "";
+        // O(n^2) - Iterates over the inputList to a Task with every other Task
+        // with exceptions to Anti-Tasks which are skipped.
+        for (int i = 0; i < taskList.size(); i++) {
 
-        // Below Strings are used if inputTask is recurring task.
-        String inputTaskEndDate = "";
-        String inputTaskEndYear = "", inputTaskEndMonth = "", inputTaskEndDay = "";
-
-        // Below are inputTask parsed to ints.
-        int inputTaskYearInt = 0,
-                inputTaskMonthInt = 0,
-                inputTaskDayInt = 0,
-                inputTaskEndYearInt = 0,
-                inputTaskEndMonthInt = 0,
-                inputTaskEndDayInt = 0;
-
-        if ( inputTask instanceof RecurringTask) {
-
-            Double doubleInputTaskEndDate = inputTask.getEndDate(); // ERROR: Cannot call getEndDate()
-            inputTaskEndDate = doubleInputTaskEndDate.toString();
-
-            // Get inputTask's Year, Month and Day.
-            for ( int i = 0; i < 4; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i);
-                inputTaskYear += currentLetter;
+            // If the current Task is Anti-Task, skip it.
+            if (inputList.get(i) instanceof AntiTask) {
+                continue;
             }
 
-            for ( int i = 0; i < 2; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i + 4);
-                inputTaskMonth += currentLetter;
-            }
+            // For loop will iterate over every OTHER task to check for overlaps.
+            for (int j = 1; j < taskList.size(); j++) {
 
-            for ( int i = 0; i < 2; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i + 6);
-                inputTaskDay += currentLetter;
-            }
-
-            // Get inputTask's End Year, End Month and End Day.
-            for ( int i = 0; i < 4; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i);
-                inputTaskEndYear += currentLetter;
-            }
-
-            for ( int i = 0; i < 2; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i + 4);
-                inputTaskEndMonth += currentLetter;
-            }
-
-            for ( int i = 0; i < 2; i++ ) {
-                char currentLetter = inputTaskDate.charAt(i + 6);
-                inputTaskEndDay += currentLetter;
-            }
-
-            //Parse all Strings to int.
-            inputTaskYearInt = Integer.parseInt(inputTaskYear);
-            inputTaskMonthInt = Integer.parseInt(inputTaskMonth);
-            inputTaskDayInt = Integer.parseInt(inputTaskDay);
-            inputTaskEndYearInt = Integer.parseInt(inputTaskEndYear);
-            inputTaskEndMonthInt = Integer.parseInt(inputTaskEndMonth);
-            inputTaskEndDayInt = Integer.parseInt(inputTaskEndDay);
-        }
-
-        // Identify the type of task:
-        if (inputTask instanceof TransientTask) {
-
-            for (Task task : taskList) {
-
-                // Below Strings are used if inputTask is recurring task.
-                Double doubleCurrentTaskDate = task.getDate(); // ERROR: Cannot call getEndDate()
-                String currentTaskDate = doubleInputTaskDate.toString();
-                String currentTaskYear = "", currentTaskMonth = "", currentTaskDay = "";
-                String currentTaskEndDate = "";
-                String currentTaskEndYear = "", currentTaskEndMonth = "", currentTaskEndDay = "";
-                // Below are current Recurring Task parsed to ints.
-                int currentTaskYearInt = 0,
-                        currentTaskMonthInt = 0,
-                        currentTaskDayInt = 0,
-                        currentTaskEndYearInt = 0,
-                        currentTaskEndMonthInt = 0,
-                        currentTaskEndDayInt = 0;
-
-                // Do not check any Anti-Tasks because they should not have an overlap.
-                // Skip all Anti-Tasks
-                // OR skip if the Task has the same name
-                if (task instanceof AntiTask || task.getName().equals(inputTask.getName())) {
+                // Check if the next Task in the list is an Anti-Task OR The names are the same. If so, skip to next Task.
+                if (inputList.get(j) instanceof AntiTask || inputList.get(i).getName().equals(inputList.get(j).getName())) {
                     continue;
                 }
 
-                // Checks if Tasks' Dates and Start Times are the same.
-                if (task.getDate() == inputTask.getDate()
-                        && task.getStartTime() == inputTask.getStartTime()) {
+                // If current Task and next Task have the same Date AND startTime, return true.
+                if (inputList.get(i).getDate() == inputList.get(j).getDate()
+                        && inputList.get(i).getStartTime() == inputList.get(j).getStartTime()) {
                     return true;
                 }
 
-                if ( task instanceof RecurringTask ) {
+                // Create two doubles to store the end times of the current Task ( 'i' index ) and next Task ( 'j' index )
+                double currentTaskEndTime = inputList.get(i).getStartTime() + inputList.get(i).getDuration(),
+                        nextTaskEndTime = inputList.get(j).getStartTime() + inputList.get(j).getDuration();
 
-                    Double doubleCurrentTaskEndDate = task.getEndDate(); // ERROR: Cannot call getEndDate()
-                    currentTaskEndDate = doubleInputTaskEndDate.toString();
+                // If next Task has midnight exception AND current Task does not.
+                if (nextTaskEndTime > 23.75 && currentTaskEndTime < 23.75) {
 
-                    // Get inputTask's Year, Month and Day.
-                    for ( int i = 0; i < 4; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i);
-                        currentTaskYear += currentLetter;
+                    // Subtracting 24 from the endTime would correct the endTime.
+                    nextTaskEndTime -= 24;
+
+                    // next Task is prominent in two days, so get the next day.
+                    String parsedDate = new Schedule().formatLocalDate(inputList.get(j).getDate());
+                    LocalDate localDate = LocalDate.parse(parsedDate);
+                    localDate = localDate.plusDays(1);
+                    String nextTaskNewDate = new Schedule().formatTaskDate(localDate.toString());
+
+                    // Check if both Tasks' Dates match
+                    if (inputList.get(i).getDate() == inputList.get(j).getDate()) {
+                        // Between current Task's start time and midnight
+
+                        // Checks if current Task's end time is between next Task's start time and midnight.
+                        if (inputList.get(j).getStartTime() < currentTaskEndTime && currentTaskEndTime <= 0) {
+                            return true;
+                        }
+                    }
+                    // Check if the next Task's next day is the same as current Task's day.
+                    else if (inputList.get(i).getDate() == Double.parseDouble(nextTaskNewDate)) {
+                        // Between midnight and currentTaskEndTime
+
+                        // Checks if current Task's start time is between midnight and next Task's end time.
+                        if (0 <= inputList.get(i).getStartTime() && inputList.get(i).getStartTime() < nextTaskEndTime) {
+                            return true;
+                        }
                     }
 
-                    for ( int i = 0; i < 2; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i + 4);
-                        currentTaskMonth += currentLetter;
-                    }
-
-                    for ( int i = 0; i < 2; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i + 6);
-                        currentTaskDay += currentLetter;
-                    }
-
-                    // Get inputTask's End Year, End Month and End Day.
-                    for ( int i = 0; i < 4; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i);
-                        currentTaskEndYear += currentLetter;
-                    }
-
-                    for ( int i = 0; i < 2; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i + 4);
-                        currentTaskEndMonth += currentLetter;
-                    }
-
-                    for ( int i = 0; i < 2; i++ ) {
-                        char currentLetter = currentTaskDate.charAt(i + 6);
-                        currentTaskEndDay += currentLetter;
-                    }
-
-                    //Parse all Strings to int.
-                    currentTaskYearInt = Integer.parseInt(currentTaskYear);
-                    currentTaskMonthInt = Integer.parseInt(currentTaskMonth);
-                    currentTaskDayInt = Integer.parseInt(currentTaskDay);
-                    currentTaskEndYearInt = Integer.parseInt(currentTaskEndYear);
-                    currentTaskEndMonthInt = Integer.parseInt(currentTaskEndMonth);
-                    currentTaskEndDayInt = Integer.parseInt(currentTaskEndDay);
                 }
 
-                // Checking if the Task in the list is Transient:
-                if ( task instanceof TransientTask && task.getDate() == inputTask.getDate() ) {
-                    double currentTaskEndTime = task.getStartTime() + task.getDuration(),
-                            inputTaskEndTime = task.getStartTime() + task.getDuration();
+                // If current Task goes past midnight AND next Task does not.
+                else if (currentTaskEndTime > 23.75 && nextTaskEndTime < 23.75) {
+                    currentTaskEndTime -= 24;
 
-                    // Checking WITH midnight exception.
+                    // current Task is prominent in two days, so get the next day.
+                    String parsedDate = new Schedule().formatLocalDate(inputList.get(i).getDate());
+                    LocalDate localDate = LocalDate.parse(parsedDate);
+                    localDate = localDate.plusDays(1);
+                    String currentTaskNewDate = new Schedule().formatTaskDate(localDate.toString());
 
-                    // If current Task has midnight exception
-                    if (task.getStartTime() + task.getDuration() > 23.75 && inputTask.getStartTime() + inputTask.getDuration() < 23.75) {
-                        currentTaskEndTime -= 24;
+                    // Check if both Tasks' Dates match
+                    if (inputList.get(i).getDate() == inputList.get(j).getDate()) {
+                        // Between next Task's start time and midnight
 
-                        if (currentTaskEndTime == inputTaskEndTime) {
-                            return true;
-                            // Between current Task's start time and midnight
-                        } else if ( task.getStartTime() < inputTask.getStartTime() && inputTask.getStartTime() <= 0 ) {
-                            // Checks if inputTask start time is between current Task's start time and midnight.
-                            return true;
-                        } else if ( task.getStartTime() < inputTaskEndTime && inputTaskEndTime <= 0 ) {
-                            // Checks if inputTask end time is between current Task's start time and midnight.
+                        // Checks if next Task's end time is between current Task's start time and midnight.
+                        if (inputList.get(i).getStartTime() < nextTaskEndTime && nextTaskEndTime <= 0) {
                             return true;
                         }
+                    }
+                    // Check if the current Task's next day is the same as next Task's day.
+                    else if (inputList.get(j).getDate() == Double.parseDouble(currentTaskNewDate)) {
+                        // Between midnight and nextTaskEndTime
 
-                        // Between midnight and currentTaskEndTime
-                        else if ( 0 <= inputTask.getStartTime() && inputTask.getStartTime() < currentTaskEndTime ) {
-                            // Checks if inputTask's start time is between midnight and current task's end time.
+                        // Checks if next Task's start time is between midnight and current Task's end time.
+                        if (0 <= inputList.get(j).getStartTime() && inputList.get(j).getStartTime() < currentTaskEndTime) {
                             return true;
                         }
+                    }
 
-                        // If input Task has midnight exception
-                    } else if (inputTask.getStartTime() + inputTask.getDuration() > 23.75 && task.getStartTime() + task.getDuration() < 23.75) {
-                        inputTaskEndTime -= 24;
-
-                        if (currentTaskEndTime == inputTaskEndTime) {
-                            return true;
-                        } else if ( inputTask.getStartTime() < task.getStartTime() && task.getStartTime() <= 0 ) {
-                            // Checks if current task start time is between inputTask's start time and midnight.
-                            return true;
-                        } else if ( inputTask.getStartTime() < currentTaskEndTime && currentTaskEndTime <= 0 ) {
-                            // Checks if current Task's end time is between inputTask's start time and midnight.
-                            return true;
-                        } // Between midnight and inputTaskEndTime
-                        else if ( 0 <= task.getStartTime() && task.getStartTime() < inputTaskEndTime ) {
-                            // Checks if current task's start time is between midnight and inputTask's end time.
-                            return true;
-                        }
-
-                        // If both current Task and input Task have midnight exceptions
-                    } else if (inputTask.getStartTime() + inputTask.getDuration() > 23.75 && task.getStartTime() + task.getDuration() > 23.75) {
-                        // If both go past midnight, they will overlap.
+                }
+                // If both current Task and next Task have midnight exceptions AND are on the same day, return true
+                else if (currentTaskEndTime > 23.75 && nextTaskEndTime > 23.75
+                        && inputList.get(i).getDate() == inputList.get(j).getDate()) {
+                    return true;
+                }
+                // Checks WITHOUT midnight exception AND both Tasks are the same day.
+                else if ( inputList.get(i).getDate() == inputList.get(j).getDate() ) {
+                    // Checks if both end times are the same, return true
+                    if (nextTaskEndTime == currentTaskEndTime) {
                         return true;
-                    } else { // Checks WITHOUT midnight exception.
-
-                        if (currentTaskEndTime == inputTaskEndTime) {
-                            return true;
-                        } else if (task.getStartTime() < inputTask.getStartTime() && inputTask.getStartTime() < currentTaskEndTime) {
-                            // If inputTask's start time is within a Transient.
-                            return true;
-                        } else if (task.getStartTime() < inputTaskEndTime && inputTaskEndTime < currentTaskEndTime) {
-                            // If inputTask's end time is within a Transient.
-                            return true;
-                        } else if (inputTask.getStartTime() < task.getStartTime() && currentTaskEndTime < inputTaskEndTime) {
-                            // If a Transient is within the inputTask.
-                            return true;
-                        } else if (task.getStartTime() < inputTask.getStartTime() && inputTaskEndTime < currentTaskEndTime) {
-                            // If inputTask is within a Transient.
-                            return true;
-                        }
-
                     }
-                } else { // Checks if the input Transient Task overlaps with all Recurring Tasks
-
-                    // NOTE: Need to check exception in which an Anti-Task cancels out one instance of a Recurring Task.
-
-                    // Check the year for all years the recurring task is present. If it matches with Transient Task's year, look into it,
-                    for ( int i = currentTaskYearInt; i <= currentTaskEndYearInt; i++ ) {
-                        // Ended here.
+                    // If current Task's start time is within next Task.
+                    else if (inputList.get(j).getStartTime() < inputList.get(i).getStartTime()
+                            && inputList.get(i).getStartTime() < nextTaskEndTime) {
+                        return true;
                     }
-
-                    // Check if input Transient Task has the same year as current Recurring Task
-
-
-                    // Below is wrong, but keeping for reference.
-                    if ( inputTaskYear.equals(currentTaskYear) ) { // Error: Could be on different Years
-                        // Check if input Transient Task has the same month as current Recurring Task
-                        if ( inputTaskMonth.equals(currentTaskMonth) ) { // Error: Could be on different months
-                            // Check if current Recurring Task is daily.
-                            if ( task.RecurringTask.getFreuency() == 1 ) { // ERROR: CANNOT GET FREQUENCY OF RECURRING TASK.
-                                // Check as if it is checking a Transient task.
-                            }
-                            else if ( task.RecurringTask.getFrequency() == 7 ) { // Cannot get frequency
-
-                            }
-                            else { // else if ( task.RecurringTask.getFrequency() == 30 )
-
-                            }
-                        }
+                    // If current Task's end time is within next Task.
+                    else if (inputList.get(j).getStartTime() < currentTaskEndTime
+                            && currentTaskEndTime < nextTaskEndTime) {
+                        return true;
                     }
-                    // Below is correct
-
+                    // If next Task is within the current Task.
+                    else if (inputList.get(i).getStartTime() < inputList.get(j).getStartTime()
+                            && nextTaskEndTime < currentTaskEndTime) {
+                        return true;
+                    }
                 }
             }
-        } else { // Checks if inputTask is a Recurring Task
-
         }
-
         return false;
     }
-
-    //MAKE METHODS FOR DATE AND TIME CHECKS
 }
