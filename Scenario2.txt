@@ -1,0 +1,22 @@
+Scenario 2:
+
+1. Read the file Set2.json.  This should work.
+
+2. Add an anti-task:
+	Name: "Skip-out"
+    Type: "Cancellation"
+    Date: 20200430
+    StartTime: 19.25
+    Duration: .75
+  This should fail, it does not exactly match a recurring task.
+  
+3. Add an anti-task:
+	Name: "Skip a meal"
+    Type: "Cancellation"
+    Date: 20200428
+    StartTime: 17
+    Duration: 1
+  This should work
+
+4. Read the file Set1.json.  This should work.
+

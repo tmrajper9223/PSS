@@ -1,0 +1,31 @@
+Scenario 1:
+
+1. Read the file Set1.json.  This should work.
+
+2. Delete the task "Intern Interview".  This should work.
+
+3. Add a new transient task:
+    Name: "Intern Interview"
+    Type: "Appointment"
+    Date: 20200427
+    StartTime: 17
+    Duration: 2.5
+  This should work
+  
+4. Add a new transient task:
+	Name: "Watch a movie"
+	Type: "Movie"
+	Date: 20200429
+	StartTime: 21.5
+	Duration: 2
+  This should fail, as there is no transient task with type 'movie'
+  
+5. Add a new transient task:
+	Name: "Watch a movie"
+	Type: "Visit"
+	Date: 20200430
+	StartTime: 18.5
+	Duration: 2
+  This should fail, conflict.  You should be in class!
+  
+6. Read the file Set2.json.  This should fail because of a conflict.

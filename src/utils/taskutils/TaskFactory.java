@@ -23,7 +23,7 @@ public class TaskFactory {
     public Task createTask(JSONObject jsonObject) {
         try {
             if (isInvalidType(jsonObject.get("Type")))
-                throw new InvalidTaskFormatException("Type Must Be a String and Must Be a Valid Category");
+                throw new InvalidTaskFormatException("Type Must Be a String and Must Be a Valid Category\n");
 
             String type = (String) jsonObject.get("Type");
 
@@ -72,7 +72,7 @@ public class TaskFactory {
 
         try {
             if (isInvalidDate(jsonObject.get("Date")))
-                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD");
+                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD\n");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return null;
@@ -95,10 +95,13 @@ public class TaskFactory {
      * @return AntiTask if formatting of all fields and input are valid, if not returns null
      */
     private AntiTask createAntiTask(String type) {
-        System.out.println("Enter Task Information (Name,Date,StartTime,Duration):");
+        System.out.println("Enter Task Information (Name,Date,StartTime,Duration): ");
         String taskInfo = scan.nextLine();
-        taskInfo = taskInfo.replaceAll("\\s+", "");
+        taskInfo = taskInfo.replaceAll("\\s++$", "");
         String[] splitTaskInfo = taskInfo.split(",");
+        for (int i = 1; i < splitTaskInfo.length; i++) {
+            splitTaskInfo[i] = splitTaskInfo[i].trim();
+        }
         if (isInvalidFormat(splitTaskInfo))
             return null;
         String name = splitTaskInfo[0];
@@ -122,7 +125,7 @@ public class TaskFactory {
 
         try {
             if (isInvalidDate(jsonObject.get("Date")))
-                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD");
+                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD\n");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return null;
@@ -147,8 +150,11 @@ public class TaskFactory {
     private TransientTask createTransientTask(String type) {
         System.out.println("Enter Task Information (Name,Date,StartTime,Duration):");
         String taskInfo = scan.nextLine();
-        taskInfo = taskInfo.replaceAll("\\s+", "");
+        taskInfo = taskInfo.replaceAll("\\s++$", "");
         String[] splitTaskInfo = taskInfo.split(",");
+        for (int i = 1; i < splitTaskInfo.length; i++) {
+            splitTaskInfo[i] = splitTaskInfo[i].trim();
+        }
         if (isInvalidFormat(splitTaskInfo))
             return null;
         String name = splitTaskInfo[0];
@@ -172,7 +178,7 @@ public class TaskFactory {
 
         try {
             if (isInvalidDate(jsonObject.get("StartDate")) || isInvalidDate(jsonObject.get("EndDate")))
-                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD");
+                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD\n");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return null;
@@ -188,9 +194,9 @@ public class TaskFactory {
 
         try {
             if (isInvalidEndDate(date, jsonObject.get("EndDate")))
-                throw new InvalidTaskFormatException("EndDate Must be a Long or Double Data Type with Format of, YYYYMMDD, and Later Than the StartDate");
+                throw new InvalidTaskFormatException("EndDate Must be a Long or Double Data Type with Format of, YYYYMMDD, and Later Than the StartDate\n");
             if (isInvalidFrequency(jsonObject.get("Frequency")))
-                throw new InvalidTaskFormatException("Frequency Must be a Number with the Value, 1, 7, 30");
+                throw new InvalidTaskFormatException("Frequency Must be a Number with the Value, 1, 7, 30\n");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return null;
@@ -210,8 +216,11 @@ public class TaskFactory {
     private RecurringTask createRecurringTask(String type) {
         System.out.println("Enter Task Information (Name,Date,StartTime,Duration,EndDate,Frequency):");
         String taskInfo = scan.nextLine();
-        taskInfo = taskInfo.replaceAll("\\s+", "");
+        taskInfo = taskInfo.replaceAll("\\s++$", "");
         String[] splitTaskInfo = taskInfo.split(",");
+        for (int i = 1; i < splitTaskInfo.length; i++) {
+            splitTaskInfo[i] = splitTaskInfo[i].trim();
+        }
         if (isInvalidFormat(splitTaskInfo))
             return null;
         String name = splitTaskInfo[0];
@@ -225,15 +234,15 @@ public class TaskFactory {
             endDate = Double.parseDouble(splitTaskInfo[4]);
             frequency = Double.parseDouble(splitTaskInfo[5]);
         } catch (Exception e) {
-            System.out.println("Make Sure Fields Are: Name(String); Date(s)(Number:YYYYMMDD); 0 <= StartTime <= 23.75; 0.25 <= Duration <= 23.75; Frequency=1, 7, 30");
+            System.out.println("Make Sure Fields Are: Name(String); Date(s)(Number:YYYYMMDD); 0 <= StartTime <= 23.75; 0.25 <= Duration <= 23.75; Frequency=1, 7, 30\n");
             return null;
         }
 
         try {
             if (isInvalidDate(endDate) || isInvalidEndDate(startTime, endDate))
-                throw new InvalidTaskFormatException("End Date Must Be a Number with the format, YYYYMMDD, and must be after the start date");
+                throw new InvalidTaskFormatException("End Date Must Be a Number with the format, YYYYMMDD, and must be after the start date\n");
             if (isInvalidFrequency(frequency))
-                throw new InvalidTaskFormatException("Frequency Must Be a Number that is either; 1(Daily), 7(Weekly), or 30(Monthly)");
+                throw new InvalidTaskFormatException("Frequency Must Be a Number that is either; 1(Daily), 7(Weekly), or 30(Monthly)\n");
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return null;
@@ -250,13 +259,13 @@ public class TaskFactory {
     private boolean isInvalidFormat(JSONObject jsonObject) {
         try {
             if (isInvalidName(jsonObject.get("Name")))
-                throw new InvalidTaskFormatException("Name Field Must Be a String");
+                throw new InvalidTaskFormatException("Name Field Must Be a String\n");
 
             if (isInvalidStartTime(jsonObject.get("StartTime")))
-                throw new InvalidTaskFormatException("StartTime Field Must Be a Positive Long or Double from 0 to 23.75");
+                throw new InvalidTaskFormatException("StartTime Field Must Be a Positive Long or Double from 0 to 23.75\n");
 
             if (isInvalidDuration(jsonObject.get("Duration")))
-                throw new InvalidTaskFormatException("Duration Field Must Be a Positive Long or Double from 0.25 to 23.75");
+                throw new InvalidTaskFormatException("Duration Field Must Be a Positive Long or Double from 0.25 to 23.75\n");
 
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
@@ -273,7 +282,7 @@ public class TaskFactory {
     private boolean isInvalidFormat(String[] splitTaskInfo) {
         try {
             if (splitTaskInfo.length != 4 && splitTaskInfo.length != 6)
-                throw new InvalidTaskFormatException("Enter Task Information in 1 one line separated by commas(Recurring Tasks Must Include End Date and Frequency): name, date, ...");
+                throw new InvalidTaskFormatException("Enter Task Information in 1 one line separated by commas(Recurring Tasks Must Include End Date and Frequency): name, date, ...\n");
 
             double date, startTime, duration;
             String name = splitTaskInfo[0];
@@ -282,22 +291,22 @@ public class TaskFactory {
             duration = Double.parseDouble(splitTaskInfo[3]);
 
             if (isInvalidName(name))
-                throw new InvalidTaskFormatException("Name Field Must Be a String");
+                throw new InvalidTaskFormatException("Name Field Must Be a String\n");
 
             if (isInvalidDate(date))
-                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD");
+                throw new InvalidTaskFormatException("Date Must be a Long or Double Data Type with Format of, YYYYMMDD\n");
 
             if (isInvalidStartTime(startTime))
-                throw new InvalidTaskFormatException("StartTime Field Must Be a Positive Long or Double from 0 to 23.75");
+                throw new InvalidTaskFormatException("StartTime Field Must Be a Positive Long or Double from 0 to 23.75\n");
 
             if (isInvalidDuration(duration))
-                throw new InvalidTaskFormatException("Duration Field Must Be a Positive Long or Double from 0.25 to 23.75");
+                throw new InvalidTaskFormatException("Duration Field Must Be a Positive Long or Double from 0.25 to 23.75\n");
 
         } catch (InvalidTaskFormatException e) {
             System.out.println(e.getMessage());
             return true;
         } catch (Exception e) {
-            System.out.println("Make Sure Fields Are: Name(String); Date(Number:YYYYMMDD); 0 <= StartTime <= 23.75; 0.25 <= Duration <= 23.75");
+            System.out.println("Make Sure Fields Are: Name(String); Date(Number:YYYYMMDD); 0 <= StartTime <= 23.75; 0.25 <= Duration <= 23.75\n");
             return true;
         }
         return false;
@@ -346,7 +355,7 @@ public class TaskFactory {
      * @param dateObject Object Parsed From JSONObject
      * @return true if neither long or double or does NOT follows correct format of YYYYMMDD, where numOfDays in month matches year
      */
-    private boolean isInvalidDate(Object dateObject) {
+    public boolean isInvalidDate(Object dateObject) {
         double date;
         if (dateObject instanceof Double)
             date = (double) dateObject;
