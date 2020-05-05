@@ -100,16 +100,19 @@ public class Controller {
      * @return Task if found, null if not
      */
     public Task getTask(String name) {
+        for (Task task : taskList) {
+            if (name.equals(task.getName()))
+                return task;
+        }
         return null;
     }
 
     /**
-     * Finds the Task By name and replaces that task with the edited task
-     * @param name name of the Task to Edit
-     * @param editedTask New Edited Task to replace the old task
+     * Adds Task To Task List, Called From UI editTask()
+     * @param task Either Old Task Rolled Back From editTask() or new Edited Task Added
      */
-    public void replace(String name, Task editedTask) {
-
+    public void addTask(Task task) {
+        taskList.add(task);
     }
 
     /**
@@ -200,7 +203,9 @@ public class Controller {
             }
             if (new Schedule().getSchedule(newTasks) == null)
                 throw new NullPointerException("New Task(s) Were Not Added To Schedule, Overlaps Detected in Schedule\n");
+
             taskList.addAll(newTasks);
+            System.out.println("Tasks Successfully Read!\n");
         } catch (NullPointerException e) {
             // If Task File Cannot Be Parsed Correctly, Rollback Task List
             newTasks.clear();
@@ -238,7 +243,7 @@ public class Controller {
      * @param name task name passed in by user/program
      * @return true if task is already in the task list
      */
-    private boolean doesTaskExist(String name) {
+    public boolean doesTaskExist(String name) {
         for (Task task : taskList)
             if (task.getName().equals(name))
                 return true;

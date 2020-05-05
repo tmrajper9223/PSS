@@ -1,5 +1,4 @@
 import utils.IOUtils.ScannerUtil;
-import utils.taskutils.RecurringTask;
 import utils.taskutils.Task;
 import utils.taskutils.TaskFactory;
 
@@ -13,9 +12,9 @@ import java.util.regex.Pattern;
  */
 public class UserInterface {
 
-    private Controller controller;
+    private final Controller controller;
 
-    private Scanner scan;
+    private final Scanner scan;
 
     public UserInterface() {
         controller = Controller.getInstance();
@@ -71,7 +70,7 @@ public class UserInterface {
     /**
      * User Enters Task Type and sends type to controller, controller handles exceptions
      */
-    private void createTask() {
+    private boolean createTask() {
         try {
             System.out.println("Enter Task Type: ");
             String type = scan.nextLine();
@@ -79,9 +78,11 @@ public class UserInterface {
             if (newTask == null)
                 throw new NullPointerException();
             System.out.println("New Task Has Been Added!\n");
+            return true;
         } catch (NullPointerException ignored) {
             System.out.println("Failed to Add Task\n");
         }
+        return false;
     }
 
     /**
@@ -108,89 +109,25 @@ public class UserInterface {
     }
 
     /**
-     * Prompts User for Task Name and sends name to controller -> controller.getTask(String name)
-     * If Task Not Found controller Throws Exception and returns null
-     * NullPointerException ignored here
-     * If Task Found Prompt User for fields to edit, when finished with edits call -> controller.replace(String name, Task editedTask)
-     * String name -> Name of the task prompted for in the beginning of the function
-     * If edits are not valid for formatting, exception will be thrown in controller and return null, function will terminate and no changes saved
+     * User Enters Task Name, If Exists Prompts the createTask() method
+     * Simpler Approach, if user modifies Task Type, much easier to Create Task From scratch
+     * If Changes Invalid, Task List/Schedule are Rolled Back
      */
     private void editTask() {
-        System.out.println("Enter Task Name to Edit: ");
-        String name = scan.nextLine();
-        try{
-            Task task = controller.viewTask(name);
-            Task editedTask = new Task();
-            editedTask.setName(task.getName());
-            editedTask.setType(task.getType());
-            editedTask.setDate(task.getDate());
-            editedTask.setDuration(task.getDate());
+        try {
+            System.out.println("Enter Task Name: ");
+            String taskName = scan.nextLine();
+            if (!controller.doesTaskExist(taskName))
+                throw new Exception("A Task With That Name Does Not Exist!\n");
 
-            if(task instanceof RecurringTask){
-                editedTask = new RecurringTask();
-                ((RecurringTask) editedTask).setFrequency(((RecurringTask) task).getFrequency());
-                ((RecurringTask) editedTask).setEndDate(((RecurringTask) task).getEndDate());
-            }
-            System.out.println(task.toString());
-            String edit;
-            while(true) {
-                System.out.println("What Would you like to Edit?\nType q to quit.");
-                edit = scan.nextLine();
-                if(edit.equals("q")){
-                    break;
-                }else{
-                    switch(edit){
-                        case "Name":
-                            System.out.println("Please Enter a new Name: ");
-                            String editName = scan.nextLine();
-                            editedTask.setName(editName);
-                            break;
-                        case "Date":
-                            System.out.println("Please Enter a new Date: ");
-                            double editDate = scan.nextDouble();
-                            scan.nextLine();
-                            editedTask.setDate(editDate);
-                            break;
-                        case "StartTime":
-                            System.out.println("Please Enter a new StartTime: ");
-                            double editStartTime = scan.nextDouble();
-                            scan.nextLine();
-                            editedTask.setStartDate(editStartTime);
-                            break;
-                        case "Duration":
-                            System.out.println("Please Enter a new Duration: ");
-                            double editDuration = scan.nextDouble();
-                            scan.nextLine();
-                            editedTask.setDuration(editDuration);
-                            break;
-                        case "EndDate":
-                            if(task instanceof RecurringTask){
-                                System.out.println("Please Enter a new EndDate: ");
-                                double editEndDate = scan.nextDouble();
-                                scan.nextLine();
-                                ((RecurringTask) editedTask).setEndDate(editEndDate);
-                            }else{
-                                System.out.println("The Current Task Type does not need an EndDate");
-                            }
-                            break;
-                        case "Frequency":
-                            if(task instanceof  RecurringTask){
-                                System.out.println("Please Enter a new Frequency: ");
-                                double editFrequency = scan.nextDouble();
-                                ((RecurringTask) editedTask).setFrequency(editFrequency);
-                            }else{
-                                System.out.println("The Current Task Type does not need a Frequency");
-                            }
-                            break;
-                    }
-                    scan.nextLine();
-                }
-            }
-            
-            controller.replace(name, task);
-
-        }catch (NullPointerException ignored){
-            System.out.println("A Task With that Name Does Not Exist!\n");
+            Task oldTask = controller.getTask(taskName);
+            System.out.println(oldTask.toString());
+            controller.deleteTask(oldTask.getName());
+            System.out.println("Re-Enter Edited Task Information: ");
+            if (!createTask())
+                controller.addTask(oldTask);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

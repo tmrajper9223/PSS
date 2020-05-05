@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class TaskFactory {
 
-    private Scanner scan;
+    private final Scanner scan;
 
     public TaskFactory() {
         scan = ScannerUtil.getInstance();

@@ -8,14 +8,14 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * Schedule is Generated Here, Data Structure for Schedule To Be Determined
+ * Schedule is Generated Here
  */
 public class Schedule {
 
     protected boolean isValid, hasOverlap, isInvalidAntiTask;
 
     TreeMap<Double, List<Task>> mappedSchedule;
-    private List<Task> schedule;
+    private final List<Task> schedule;
 
     public Schedule() {
         isValid = true;
